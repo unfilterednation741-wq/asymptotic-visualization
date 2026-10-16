@@ -2,74 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Asymptotic Notations | Interactive Visualization</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Little o & Little Omega | Visual Lab</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--navy:#10213b;--teal:#0f766e;--gold:#f59e0b;--paper:#f4f7fb;--ink:#172033}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--paper);color:var(--ink)}
-header{padding:38px 20px;text-align:center;color:white;background:linear-gradient(135deg,#10213b,#155e75)}
-header .tag{display:inline-block;border:1px solid #ffffff70;border-radius:999px;padding:6px 12px;font-size:12px;letter-spacing:1px;text-transform:uppercase}
-h1{font-size:clamp(28px,5vw,44px);margin:16px 0 8px}
-header p{max-width:720px;margin:0 auto;color:#dbeafe;line-height:1.7}
-main{max-width:1000px;margin:26px auto;padding:0 16px}
-.card{background:white;border-radius:18px;padding:22px;margin:18px 0;box-shadow:0 10px 30px #10213b0c;border:1px solid #e4eaf2}
-h2{margin-top:0;color:var(--navy)}
-.chart-wrap{height:390px;position:relative}
-.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}
-label{font-weight:600}
-select,input,button{font:inherit;border-radius:10px;padding:10px 12px;border:1px solid #cbd5e1;background:white}
-button{background:var(--teal);color:white;border:0;cursor:pointer;font-weight:700}
-button:hover{filter:brightness(.92)}
-.note{background:#fffbeb;border-left:4px solid var(--gold);padding:12px 14px;border-radius:8px;line-height:1.6}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-.tile{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px}
-.tile strong{display:block;color:var(--teal);font-size:20px;margin-bottom:6px}
-footer{text-align:center;color:#64748b;padding:25px;font-size:14px}
-@media(max-width:600px){.chart-wrap{height:320px}.card{padding:16px}}
+:root{--navy:#10213b;--teal:#0f766e;--gold:#f59e0b;--paper:#f3f6fb;--ink:#172033}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--paper);color:var(--ink)}
+header{padding:42px 18px;text-align:center;color:white;background:linear-gradient(135deg,#10213b,#0f766e)}
+.tag{display:inline-block;border:1px solid #ffffff80;border-radius:999px;padding:6px 12px;font-size:12px;letter-spacing:1px;text-transform:uppercase}
+h1{font-size:clamp(30px,5vw,46px);margin:16px 0 8px}header p{max-width:760px;margin:auto;line-height:1.7;color:#e0f2fe}
+main{max-width:1100px;margin:26px auto;padding:0 16px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:22px;margin:18px 0;box-shadow:0 8px 28px #10213b0b}
+h2{color:var(--navy);margin-top:0}.sub{color:#64748b;line-height:1.6}.chart{height:330px;position:relative}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.concept{padding:17px;border-radius:13px;background:#f8fafc;border:1px solid #e2e8f0}.concept h3{margin-top:0;color:var(--teal)}
+.controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px;background:#f8fafc;border-radius:12px;margin:15px 0}
+input{padding:10px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;width:100px}button{padding:10px 15px;background:var(--teal);color:white;border:0;border-radius:9px;font:inherit;font-weight:700;cursor:pointer}
+.metric{font-size:22px;font-weight:800;color:var(--teal)}.note{background:#fffbeb;border-left:4px solid var(--gold);padding:13px 15px;border-radius:8px;line-height:1.65}
+footer{text-align:center;padding:25px;color:#64748b;font-size:14px}
+@media(max-width:600px){.card{padding:16px}.chart{height:280px}}
 </style>
 </head>
 <body>
 <header>
-  <span class="tag">Design and Analysis of Algorithms</span>
-  <h1>Asymptotic Notations</h1>
-  <p>Explore how common functions grow as input size increases, with a focus on understanding Little-o and Little-omega notation.</p>
+<span class="tag">Design and Analysis of Algorithms · Semester III</span>
+<h1>Little o & Little ω</h1>
+<p>An interactive visual lab for understanding strict asymptotic growth. Follow both the function curves and the ratio that defines the relationship.</p>
 </header>
 <main>
-  <section class="card">
-    <h2>Function Growth Explorer</h2>
-    <p>Choose an input size and compare the numerical values of common growth functions.</p>
-    <div class="controls">
-      <label for="nValue">Input size n:</label>
-      <input id="nValue" type="number" min="1" max="20" value="8">
-      <button id="updateBtn">Update chart</button>
-    </div>
-    <div class="chart-wrap"><canvas id="growthChart" aria-label="Bar chart comparing function growth" role="img"></canvas></div>
-    <div id="values" class="grid" aria-live="polite"></div>
-  </section>
-  <section class="card">
-    <h2>Understanding the notation</h2>
-    <div class="grid">
-      <div class="tile"><strong>Little-o: f(n) = o(g(n))</strong>f grows strictly slower than g in the limiting sense: f(n)/g(n) approaches 0 as n approaches infinity.</div>
-      <div class="tile"><strong>Little-omega: f(n) = ω(g(n))</strong>f grows strictly faster than g in the limiting sense: f(n)/g(n) approaches infinity as n approaches infinity.</div>
-      <div class="tile"><strong>Remember</strong>A bar chart at one input size illustrates values only. Asymptotic claims depend on behaviour as n becomes very large.</div>
-    </div>
-  </section>
-  <section class="card">
-    <h2>Example: n = 8</h2>
-    <p>At n = 8, n = 8, n² = 64, n³ = 512, and 2ⁿ = 256. The cubic function is larger than the exponential function at this particular input, but 2ⁿ eventually outgrows n³ as n increases.</p>
-    <p class="note">For large n, exponential functions can grow much faster than polynomial functions. Use the input control to explore how the displayed values change. Values are capped at n = 20 to keep the chart readable.</p>
-  </section>
+<section class="card">
+<h2>1. Little-o: slower growth</h2>
+<p class="sub">Example: n = o(n²). The ratio n/n² = 1/n approaches 0 as n grows.</p>
+<div class="chart"><canvas id="littleO"></canvas></div>
+<div class="chart" style="margin-top:24px"><canvas id="ratioO"></canvas></div>
+<div class="grid" style="margin-top:16px">
+<div class="concept"><h3>Function comparison</h3><p>f(n) = n and g(n) = n²</p><p class="metric">f(n) / g(n) → 0</p></div>
+<div class="concept"><h3>Interpretation</h3><p>The linear function becomes negligible compared with the quadratic function.</p></div>
+</div>
+</section>
+<section class="card">
+<h2>2. Little-omega: faster growth</h2>
+<p class="sub">Example: n² = ω(n). The ratio n²/n = n grows without bound as n grows.</p>
+<div class="chart"><canvas id="littleW"></canvas></div>
+<div class="chart" style="margin-top:24px"><canvas id="ratioW"></canvas></div>
+<div class="grid" style="margin-top:16px">
+<div class="concept"><h3>Function comparison</h3><p>f(n) = n² and g(n) = n</p><p class="metric">f(n) / g(n) → ∞</p></div>
+<div class="concept"><h3>Interpretation</h3><p>The quadratic function increasingly dominates the linear function.</p></div>
+</div>
+</section>
+<section class="card">
+<h2>3. Explore different input sizes</h2>
+<p class="sub">Change the maximum n shown on the graphs. Watch how the ratios change as the input range grows.</p>
+<div class="controls"><label for="rangeN"><b>Maximum input n:</b></label><input id="rangeN" type="number" min="5" max="50" value="20"><button id="apply">Update all graphs</button></div>
+<div class="note"><b>Key idea:</b> A single bar chart compares values at one input size. These line graphs plus ratio graphs communicate the asymptotic idea more directly. The examples illustrate the definitions; a finite graph alone is not a formal proof.</div>
+</section>
+<section class="card">
+<h2>Definitions at a glance</h2>
+<div class="grid">
+<div class="concept"><h3>Little-o</h3><p>f(n) = o(g(n)) when f(n)/g(n) → 0 as n → ∞, for the examples shown here.</p></div>
+<div class="concept"><h3>Little-omega</h3><p>f(n) = ω(g(n)) when f(n)/g(n) → ∞ as n → ∞, for the examples shown here.</p></div>
+</div>
+</section>
 </main>
-<footer>Created by Ankit Rajak · Batch 17 · Semester III</footer>
+<footer>Created by Ankit Rajak · Batch 17 · Asymptotic Notations</footer>
 <script>
-const input=document.getElementById('nValue');
-const values=document.getElementById('values');
-const ctx=document.getElementById('growthChart');
-const chart=new Chart(ctx,{type:'bar',data:{labels:['n','n²','n³','2ⁿ'],datasets:[{label:'Function value',data:[8,64,512,256],backgroundColor:['#38bdf8','#818cf8','#2dd4bf','#fbbf24'],borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>Number(c.raw).toLocaleString()}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>Number(v).toLocaleString()},title:{display:true,text:'Function value'}},x:{title:{display:true,text:'Function'}}}}});
-function update(){let n=Math.max(1,Math.min(20,Number(input.value)||1));input.value=n;const vals=[n,n**2,n**3,2**n];chart.data.datasets[0].data=vals;chart.options.scales.y.max=Math.max(...vals)*1.15;chart.update();values.innerHTML=vals.map((v,i)=>'<div class="tile"><strong>'+chart.data.labels[i]+'</strong>'+v.toLocaleString()+'</div>').join('');}
-document.getElementById('updateBtn').addEventListener('click',update);input.addEventListener('keydown',e=>{if(e.key==='Enter')update()});update();
+const chartRefs={};
+function makeChart(id,title,sets){chartRefs[id]=new Chart(document.getElementById(id),{type:'line',data:{labels:[],datasets:sets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{title:{display:true,text:title,font:{size:15}},legend:{position:'bottom'}},scales:{x:{title:{display:true,text:'Input size n'}},y:{beginAtZero:true,title:{display:true,text:'Function value / ratio'}}}}});}
+function series(label,data,color){return {label,data,borderColor:color,backgroundColor:color,tension:.2,pointRadius:0,borderWidth:3};}
+makeChart('littleO','Function growth: n versus n²',[series('f(n) = n',[], '#0f766e'),series('g(n) = n²',[], '#f59e0b')]);
+makeChart('ratioO','Little-o ratio: n / n² = 1/n',[series('f(n) / g(n)',[], '#7c3aed')]);
+makeChart('littleW','Function growth: n² versus n',[series('f(n) = n²',[], '#f59e0b'),series('g(n) = n',[], '#0f766e')]);
+makeChart('ratioW','Little-omega ratio: n² / n = n',[series('f(n) / g(n)',[], '#db2777')]);
+function updateAll(){let max=Math.max(5,Math.min(50,Number(document.getElementById('rangeN').value)||20));document.getElementById('rangeN').value=max;const ns=Array.from({length:max},(_,i)=>i+1);const n2=ns.map(n=>n*n);chartRefs.littleO.data.labels=ns;chartRefs.littleO.data.datasets[0].data=ns;chartRefs.littleO.data.datasets[1].data=n2;chartRefs.ratioO.data.labels=ns;chartRefs.ratioO.data.datasets[0].data=ns.map(n=>1/n);chartRefs.littleW.data.labels=ns;chartRefs.littleW.data.datasets[0].data=n2;chartRefs.littleW.data.datasets[1].data=ns;chartRefs.ratioW.data.labels=ns;chartRefs.ratioW.data.datasets[0].data=ns;Object.values(chartRefs).forEach(c=>c.update());}
+document.getElementById('apply').addEventListener('click',updateAll);document.getElementById('rangeN').addEventListener('keydown',e=>{if(e.key==='Enter')updateAll()});updateAll();
 </script>
 </body>
 </html>
