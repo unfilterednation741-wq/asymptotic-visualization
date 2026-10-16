@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asymptotic Notations | Interactive Visualization</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--navy:#10213b;--teal:#0f766e;--gold:#f59e0b;--paper:#f4f7fb;--ink:#172033}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--paper);color:var(--ink)}
+header{padding:38px 20px;text-align:center;color:white;background:linear-gradient(135deg,#10213b,#155e75)}
+header .tag{display:inline-block;border:1px solid #ffffff70;border-radius:999px;padding:6px 12px;font-size:12px;letter-spacing:1px;text-transform:uppercase}
+h1{font-size:clamp(28px,5vw,44px);margin:16px 0 8px}
+header p{max-width:720px;margin:0 auto;color:#dbeafe;line-height:1.7}
+main{max-width:1000px;margin:26px auto;padding:0 16px}
+.card{background:white;border-radius:18px;padding:22px;margin:18px 0;box-shadow:0 10px 30px #10213b0c;border:1px solid #e4eaf2}
+h2{margin-top:0;color:var(--navy)}
+.chart-wrap{height:390px;position:relative}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}
+label{font-weight:600}
+select,input,button{font:inherit;border-radius:10px;padding:10px 12px;border:1px solid #cbd5e1;background:white}
+button{background:var(--teal);color:white;border:0;cursor:pointer;font-weight:700}
+button:hover{filter:brightness(.92)}
+.note{background:#fffbeb;border-left:4px solid var(--gold);padding:12px 14px;border-radius:8px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.tile{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px}
+.tile strong{display:block;color:var(--teal);font-size:20px;margin-bottom:6px}
+footer{text-align:center;color:#64748b;padding:25px;font-size:14px}
+@media(max-width:600px){.chart-wrap{height:320px}.card{padding:16px}}
+</style>
+</head>
+<body>
+<header>
+  <span class="tag">Design and Analysis of Algorithms</span>
+  <h1>Asymptotic Notations</h1>
+  <p>Explore how common functions grow as input size increases, with a focus on understanding Little-o and Little-omega notation.</p>
+</header>
+<main>
+  <section class="card">
+    <h2>Function Growth Explorer</h2>
+    <p>Choose an input size and compare the numerical values of common growth functions.</p>
+    <div class="controls">
+      <label for="nValue">Input size n:</label>
+      <input id="nValue" type="number" min="1" max="20" value="8">
+      <button id="updateBtn">Update chart</button>
+    </div>
+    <div class="chart-wrap"><canvas id="growthChart" aria-label="Bar chart comparing function growth" role="img"></canvas></div>
+    <div id="values" class="grid" aria-live="polite"></div>
+  </section>
+  <section class="card">
+    <h2>Understanding the notation</h2>
+    <div class="grid">
+      <div class="tile"><strong>Little-o: f(n) = o(g(n))</strong>f grows strictly slower than g in the limiting sense: f(n)/g(n) approaches 0 as n approaches infinity.</div>
+      <div class="tile"><strong>Little-omega: f(n) = ω(g(n))</strong>f grows strictly faster than g in the limiting sense: f(n)/g(n) approaches infinity as n approaches infinity.</div>
+      <div class="tile"><strong>Remember</strong>A bar chart at one input size illustrates values only. Asymptotic claims depend on behaviour as n becomes very large.</div>
+    </div>
+  </section>
+  <section class="card">
+    <h2>Example: n = 8</h2>
+    <p>At n = 8, n = 8, n² = 64, n³ = 512, and 2ⁿ = 256. The cubic function is larger than the exponential function at this particular input, but 2ⁿ eventually outgrows n³ as n increases.</p>
+    <p class="note">For large n, exponential functions can grow much faster than polynomial functions. Use the input control to explore how the displayed values change. Values are capped at n = 20 to keep the chart readable.</p>
+  </section>
+</main>
+<footer>Created by Ankit Rajak · Batch 17 · Semester III</footer>
+<script>
+const input=document.getElementById('nValue');
+const values=document.getElementById('values');
+const ctx=document.getElementById('growthChart');
+const chart=new Chart(ctx,{type:'bar',data:{labels:['n','n²','n³','2ⁿ'],datasets:[{label:'Function value',data:[8,64,512,256],backgroundColor:['#38bdf8','#818cf8','#2dd4bf','#fbbf24'],borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>Number(c.raw).toLocaleString()}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>Number(v).toLocaleString()},title:{display:true,text:'Function value'}},x:{title:{display:true,text:'Function'}}}}});
+function update(){let n=Math.max(1,Math.min(20,Number(input.value)||1));input.value=n;const vals=[n,n**2,n**3,2**n];chart.data.datasets[0].data=vals;chart.options.scales.y.max=Math.max(...vals)*1.15;chart.update();values.innerHTML=vals.map((v,i)=>'<div class="tile"><strong>'+chart.data.labels[i]+'</strong>'+v.toLocaleString()+'</div>').join('');}
+document.getElementById('updateBtn').addEventListener('click',update);input.addEventListener('keydown',e=>{if(e.key==='Enter')update()});update();
+</script>
+</body>
+</html>
